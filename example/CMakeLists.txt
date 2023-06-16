@@ -20,6 +20,9 @@ target_link_libraries(rangeSearch pargeoLib)
 add_executable(dynamicKdTreeKNN dynamicKdTreeKNN.cpp)
 target_link_libraries(dynamicKdTreeKNN pargeoLib)
 
+add_executable(TreeClient TreeClient.cpp)
+target_link_libraries(TreeClient pargeoLib)
+
 add_executable(batchKdTree batchKdTree.cpp)
 target_link_libraries(batchKdTree pargeoLib)
 

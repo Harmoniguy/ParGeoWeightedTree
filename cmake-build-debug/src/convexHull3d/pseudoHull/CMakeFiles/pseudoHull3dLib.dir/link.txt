@@ -1,0 +1,2 @@
+/usr/bin/ar qc libpseudoHull3dLib.a CMakeFiles/pseudoHull3dLib.dir/hull.cpp.o
+/usr/bin/ranlib libpseudoHull3dLib.a

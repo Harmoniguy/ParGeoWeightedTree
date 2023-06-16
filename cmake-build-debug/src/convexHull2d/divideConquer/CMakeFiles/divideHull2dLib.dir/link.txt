@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdivideHull2dLib.a CMakeFiles/divideHull2dLib.dir/hull.cpp.o
+/usr/bin/ranlib libdivideHull2dLib.a

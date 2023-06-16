@@ -1,0 +1,1 @@
+/usr/bin/c++ -DHOMEGROWN -pthread -mcx16 -O3 -DNDEBUG -fPIC  -g CMakeFiles/seb_test.dir/seb_test.cpp.o -o seb_test  ../src/enclosingBall/welzl/libwelzlSebLib.a ../src/enclosingBall/scan/libscanSebLib.a ../src/enclosingBall/sampling/libsamplingSebLib.a ../lib/libgtest.a 

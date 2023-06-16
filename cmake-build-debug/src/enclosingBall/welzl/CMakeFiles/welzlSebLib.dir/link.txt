@@ -1,0 +1,2 @@
+/usr/bin/ar qc libwelzlSebLib.a CMakeFiles/welzlSebLib.dir/seb.cpp.o CMakeFiles/welzlSebLib.dir/sebMtf.cpp.o CMakeFiles/welzlSebLib.dir/sebMtfPivot.cpp.o
+/usr/bin/ranlib libwelzlSebLib.a

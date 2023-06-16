@@ -1,0 +1,2 @@
+/usr/bin/ar qc librandIncHull2dLib.a CMakeFiles/randIncHull2dLib.dir/hull.cpp.o
+/usr/bin/ranlib librandIncHull2dLib.a

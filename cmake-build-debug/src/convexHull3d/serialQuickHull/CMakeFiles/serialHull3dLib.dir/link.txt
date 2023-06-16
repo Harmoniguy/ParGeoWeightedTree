@@ -1,0 +1,2 @@
+/usr/bin/ar qc libserialHull3dLib.a CMakeFiles/serialHull3dLib.dir/hull.cpp.o
+/usr/bin/ranlib libserialHull3dLib.a

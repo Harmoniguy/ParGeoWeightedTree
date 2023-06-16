@@ -1,0 +1,2 @@
+/usr/bin/ar qc libscanSebLib.a CMakeFiles/scanSebLib.dir/seb.cpp.o
+/usr/bin/ranlib libscanSebLib.a

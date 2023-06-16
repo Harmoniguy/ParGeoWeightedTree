@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="googletest-distribution"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\cmake-build-debug\;CMake Files\cmake-build-debug\_deps\;CMake Files\cmake-build-debug\_deps\benchmark-src\;CMake Files\cmake-build-debug\_deps\benchmark-src\cmake\;CMake Files\cmake-build-debug\_deps\benchmark-src\src\;CMake Files\cmake-build-debug\googletest-src\;CMake Files\cmake-build-debug\googletest-src\googlemock\;CMake Files\cmake-build-debug\googletest-src\googlemock\cmake\;CMake Files\cmake-build-debug\googletest-src\googletest\;CMake Files\cmake-build-debug\googletest-src\googletest\cmake\;CMake Files\src\;CMake Files\src\delaunayTriangulation\;CMake Files\src\convexHull2d\;CMake Files\src\convexHull2d\randInc\;CMake Files\src\convexHull2d\sampling\;CMake Files\src\convexHull2d\quickHull\;CMake Files\src\convexHull2d\bruteforce\;CMake Files\src\convexHull2d\divideConquer\;CMake Files\src\convexHull3d\;CMake Files\src\convexHull3d\bruteforce\;CMake Files\src\convexHull3d\serialQuickHull\;CMake Files\src\convexHull3d\parallelQuickHull\;CMake Files\src\convexHull3d\divideConquer\;CMake Files\src\convexHull3d\sampling\;CMake Files\src\convexHull3d\pseudoHull\;CMake Files\src\enclosingBall\;CMake Files\src\enclosingBall\welzl\;CMake Files\src\enclosingBall\scan\;CMake Files\src\enclosingBall\sampling\;CMake Files\src\spatialGraph\;CMake Files\src\euclideanMst\;CMake Files\src\closestPair\;CMake Files\src\dataset\;CMake Files\example\;CMake Files\benchmark\;CMake Files\test\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gmock">
+				<Option output="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/lib/libgmock.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googlemock/include"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googlemock"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/include"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 gmock"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gmock/fast">
+				<Option output="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/lib/libgmock.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googlemock/include"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googlemock"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/include"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 gmock/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gmock_main">
+				<Option output="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/lib/libgmock_main.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googlemock/include"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googlemock"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/include"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 gmock_main"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gmock_main/fast">
+				<Option output="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/lib/libgmock_main.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googlemock/include"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googlemock"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/include"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 gmock_main/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googlemock/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gtest">
+				<Option output="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/lib/libgtest.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/include"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 gtest"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gtest/fast">
+				<Option output="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/lib/libgtest.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/include"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 gtest/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gtest_main">
+				<Option output="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/lib/libgtest_main.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/include"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 gtest_main"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gtest_main/fast">
+				<Option output="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/lib/libgtest_main.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/include"/>
+					<Add directory="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 gtest_main/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-build/googletest/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googlemock/src/gmock-all.cc">
+			<Option target="gmock"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googlemock/src/gmock_main.cc">
+			<Option target="gmock_main"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/src/gtest-all.cc">
+			<Option target="gtest"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/src/gtest_main.cc">
+			<Option target="gtest_main"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/_deps/benchmark-src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\cmake-build-debug\_deps\benchmark-src\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/_deps/benchmark-src/cmake/AddCXXCompilerFlag.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\_deps\benchmark-src\cmake\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/_deps/benchmark-src/cmake/CXXFeatureCheck.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\_deps\benchmark-src\cmake\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/_deps/benchmark-src/cmake/Config.cmake.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\_deps\benchmark-src\cmake\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/_deps/benchmark-src/cmake/GetGitVersion.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\_deps\benchmark-src\cmake\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/_deps/benchmark-src/cmake/benchmark.pc.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\_deps\benchmark-src\cmake\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/_deps/benchmark-src/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\cmake-build-debug\_deps\benchmark-src\src\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\cmake-build-debug\googletest-src\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googlemock/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\cmake-build-debug\googletest-src\googlemock\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googlemock/cmake/gmock.pc.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\googletest-src\googlemock\cmake\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googlemock/cmake/gmock_main.pc.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\googletest-src\googlemock\cmake\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\cmake-build-debug\googletest-src\googletest\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/cmake/Config.cmake.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\googletest-src\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/cmake/gtest.pc.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\googletest-src\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/cmake/gtest_main.pc.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\googletest-src\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/cmake-build-debug/googletest-src/googletest/cmake/internal_utils.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\googletest-src\googletest\cmake\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/delaunayTriangulation/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\delaunayTriangulation\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/convexHull2d/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\convexHull2d\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/convexHull2d/randInc/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\convexHull2d\randInc\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/convexHull2d/sampling/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\convexHull2d\sampling\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/convexHull2d/quickHull/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\convexHull2d\quickHull\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/convexHull2d/bruteforce/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\convexHull2d\bruteforce\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/convexHull2d/divideConquer/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\convexHull2d\divideConquer\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/convexHull3d/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\convexHull3d\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/convexHull3d/bruteforce/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\convexHull3d\bruteforce\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/convexHull3d/serialQuickHull/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\convexHull3d\serialQuickHull\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/convexHull3d/parallelQuickHull/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\convexHull3d\parallelQuickHull\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/convexHull3d/divideConquer/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\convexHull3d\divideConquer\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/convexHull3d/sampling/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\convexHull3d\sampling\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/convexHull3d/pseudoHull/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\convexHull3d\pseudoHull\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/enclosingBall/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\enclosingBall\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/enclosingBall/welzl/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\enclosingBall\welzl\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/enclosingBall/scan/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\enclosingBall\scan\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/enclosingBall/sampling/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\enclosingBall\sampling\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/spatialGraph/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\spatialGraph\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/euclideanMst/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\euclideanMst\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/closestPair/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\closestPair\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/src/dataset/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\dataset\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/example/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\example\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/benchmark/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\benchmark\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/test/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\test\"/>
+		</Unit>
+		<Unit filename="/home/mentys/Github/ParGeoWeightedTree/test/CMakeLists.txt.in">
+			<Option virtualFolder="CMake Files\test\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

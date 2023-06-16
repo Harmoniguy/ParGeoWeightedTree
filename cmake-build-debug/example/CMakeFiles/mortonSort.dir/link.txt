@@ -1,0 +1,1 @@
+/usr/bin/c++ -DHOMEGROWN -pthread -mcx16 -O3 -DNDEBUG -fPIC  -g CMakeFiles/mortonSort.dir/mortonSort.cpp.o -o mortonSort 

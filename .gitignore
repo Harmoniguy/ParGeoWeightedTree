@@ -40,3 +40,4 @@ build/
 # Benchmark files
 *.json
 *.png
+.idea/

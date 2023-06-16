@@ -1,0 +1,1 @@
+/usr/bin/c++ -DHOMEGROWN -pthread -mcx16 -O3 -DNDEBUG -fPIC  -g CMakeFiles/spatialGraph_bench.dir/spatialGraph_bench.cpp.o -o spatialGraph_bench  ../src/spatialGraph/libspatialGraphLib.a ../src/euclideanMst/libemstLib.a ../_deps/benchmark-build/src/libbenchmark_main.a ../src/delaunayTriangulation/libdelaunay2dLib.a ../_deps/benchmark-build/src/libbenchmark.a -lrt 

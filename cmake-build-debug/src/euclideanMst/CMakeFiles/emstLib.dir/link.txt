@@ -1,0 +1,2 @@
+/usr/bin/ar qc libemstLib.a CMakeFiles/emstLib.dir/memoGfk/emst.cpp.o
+/usr/bin/ranlib libemstLib.a

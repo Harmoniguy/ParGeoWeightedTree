@@ -1,0 +1,2 @@
+/usr/bin/ar qc libclosestPairLib.a CMakeFiles/closestPairLib.dir/closestPair.cpp.o
+/usr/bin/ranlib libclosestPairLib.a

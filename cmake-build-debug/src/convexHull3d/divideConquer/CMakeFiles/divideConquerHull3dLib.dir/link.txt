@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdivideConquerHull3dLib.a CMakeFiles/divideConquerHull3dLib.dir/hull.cpp.o
+/usr/bin/ranlib libdivideConquerHull3dLib.a

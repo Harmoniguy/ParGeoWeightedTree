@@ -1,0 +1,2 @@
+/usr/bin/ar qc libspatialGraphLib.a CMakeFiles/spatialGraphLib.dir/delaunayGraph/delaunayGraph.cpp.o CMakeFiles/spatialGraphLib.dir/knnGraph/knnGraph.cpp.o CMakeFiles/spatialGraphLib.dir/gabrielGraph/gabrielGraph.cpp.o CMakeFiles/spatialGraphLib.dir/betaSkeleton/betaSkeleton.cpp.o CMakeFiles/spatialGraphLib.dir/spanner/spanner.cpp.o
+/usr/bin/ranlib libspatialGraphLib.a

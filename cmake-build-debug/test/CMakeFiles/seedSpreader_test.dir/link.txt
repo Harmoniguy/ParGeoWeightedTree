@@ -1,0 +1,1 @@
+/usr/bin/c++ -DHOMEGROWN -pthread -mcx16 -O3 -DNDEBUG -fPIC  -g CMakeFiles/seedSpreader_test.dir/seedSpreader_test.cpp.o -o seedSpreader_test  ../src/dataset/libdatasetLib.a ../lib/libgtest.a 

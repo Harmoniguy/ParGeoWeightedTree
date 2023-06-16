@@ -1,0 +1,1 @@
+/usr/bin/c++ -DHOMEGROWN -pthread -mcx16 -O3 -DNDEBUG -fPIC  -g CMakeFiles/seb_bench.dir/seb_bench.cpp.o -o seb_bench  ../src/enclosingBall/welzl/libwelzlSebLib.a ../src/enclosingBall/scan/libscanSebLib.a ../src/enclosingBall/sampling/libsamplingSebLib.a ../_deps/benchmark-build/src/libbenchmark_main.a ../_deps/benchmark-build/src/libbenchmark.a -lrt 

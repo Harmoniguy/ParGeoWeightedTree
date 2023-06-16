@@ -9,914 +9,907 @@
 #include "../parlay/parallel.h"
 #include "../parlay/sequence.h"
 
-template <typename T>
+template<typename T>
 using container = parlay::sequence<T>;
 
 namespace pargeo {
 
-namespace dynKdTree {
+    namespace dynKdTree {
 
-  static const bool spatialMedian = true;
+        static const bool spatialMedian = true;
 
-  template <typename In_Seq, typename Bool_Seq>
-  size_t split_two(In_Seq const &In, Bool_Seq const &Fl, parlay::flags fl = parlay::no_flag) {
-    using namespace parlay;
-    using namespace parlay::internal;
-    using T = typename In_Seq::value_type;
-    size_t n = In.size();
-    size_t l = num_blocks(n, _block_size);
-    sequence<size_t> Sums(l);
-    sliced_for(n, _block_size,
-	       [&](size_t i, size_t s, size_t e) {
-		 size_t c = 0;
-		 for (size_t j = s; j < e; j++) c += (Fl[j] == false);
-		 Sums[i] = c;
-	       },
-	       fl);
-    size_t m = scan_inplace(make_slice(Sums), addm<size_t>());
-    sequence<T> Out = sequence<T>::uninitialized(n);
-    sliced_for(n, _block_size,
-	       [&](size_t i, size_t s, size_t e) {
-		 size_t c0 = Sums[i];
-		 size_t c1 = s + (m - c0);
-		 for (size_t j = s; j < e; j++) {
-		   if (Fl[j] == false)
-		     assign_uninitialized(Out[c0++], In[j]);
-		   else
-		     assign_uninitialized(Out[c1++], In[j]);
-		 }
-	       },
-	       fl);
-    //return std::make_pair(std::move(Out), m);
-    parallel_for(0, n, [&](size_t i) {
-      In[i] = Out[i];
-    });
-    return m;
-  }
+        template<typename In_Seq, typename Bool_Seq>
+        size_t split_two(In_Seq const &In, Bool_Seq const &Fl, parlay::flags fl = parlay::no_flag) {
+            using namespace parlay;
+            using namespace parlay::internal;
+            using T = typename In_Seq::value_type;
+            size_t n = In.size();
+            size_t l = num_blocks(n, _block_size);
+            sequence<size_t> Sums(l);
+            sliced_for(n, _block_size,
+                       [&](size_t i, size_t s, size_t e) {
+                           size_t c = 0;
+                           for (size_t j = s; j < e; j++) c += (Fl[j] == false);
+                           Sums[i] = c;
+                       },
+                       fl);
+            size_t m = scan_inplace(make_slice(Sums), addm<size_t>());
+            sequence<T> Out = sequence<T>::uninitialized(n);
+            sliced_for(n, _block_size,
+                       [&](size_t i, size_t s, size_t e) {
+                           size_t c0 = Sums[i];
+                           size_t c1 = s + (m - c0);
+                           for (size_t j = s; j < e; j++) {
+                               if (Fl[j] == false)
+                                   assign_uninitialized(Out[c0++], In[j]);
+                               else
+                                   assign_uninitialized(Out[c1++], In[j]);
+                           }
+                       },
+                       fl);
+            //return std::make_pair(std::move(Out), m);
+            parallel_for(0, n, [&](size_t i) {
+                In[i] = Out[i];
+            });
+            return m;
+        }
 
-  template<int dim, typename _floatT = double>
-  class coordinate {
+        template<int dim, typename _floatT = double>
+        class coordinate {
 
-  protected:
+        protected:
 
-    _floatT data[dim];
+            _floatT data[dim];
 
-  public:
+        public:
 
-    typedef _floatT floatT;
+            typedef _floatT floatT;
 
-    coordinate(const _floatT* _data) {
+            coordinate(const _floatT *_data) {
 
-      for (int i = 0; i < dim; ++ i) data[i] = _data[i];
+                for (int i = 0; i < dim; ++i) data[i] = _data[i];
 
-    }
+            }
 
-    template<typename T>
-    coordinate(T& _data) {
+            template<typename T>
+            coordinate(T &_data) {
 
-      for (int i = 0; i < dim; ++ i) data[i] = _data[i];
+                for (int i = 0; i < dim; ++i) data[i] = _data[i];
 
-    }
+            }
 
-    coordinate() { }
+            coordinate() {}
 
-    _floatT& operator[](int i) {
+            _floatT &operator[](int i) {
 
-      return data[i];
+                return data[i];
 
-    }
+            }
 
-    template<typename T>
-    _floatT& dist(T other) {
+            template<typename T>
+            _floatT &dist(T other) {
 
-      _floatT total = 0.0;
+                _floatT total = 0.0;
 
-      for (int i = 0; i < dim; ++ i) {
-	_floatT tmp = abs(other[i] - data[i]);
-	total += tmp * tmp;
-      }
+                for (int i = 0; i < dim; ++i) {
+                    _floatT tmp = abs(other[i] - data[i]);
+                    total += tmp * tmp;
+                }
 
-      return sqrt(total);
-    }
+                return sqrt(total);
+            }
 
-  };
+        };
 
 
-  template<int dim> class boundingBox {
+        template<int dim>
+        class boundingBox {
 
-  private:
+        private:
 
-    coordinate<dim> minCoords, maxCoords;
+            coordinate<dim> minCoords, maxCoords;
 
-  public:
+        public:
 
-    enum relation { exclude, include, overlap };
+            enum relation {
+                exclude, include, overlap
+            };
 
-    coordinate<dim> getMin() { return minCoords; }
+            coordinate<dim> getMin() { return minCoords; }
 
-    coordinate<dim> getMax() { return maxCoords; }
+            coordinate<dim> getMax() { return maxCoords; }
 
-    void setMin(int i, typename coordinate<dim>::floatT val) { minCoords[i] = val; }
+            void setMin(int i, typename coordinate<dim>::floatT val) { minCoords[i] = val; }
 
-    void setMax(int i, typename coordinate<dim>::floatT val) { maxCoords[i] = val; }
+            void setMax(int i, typename coordinate<dim>::floatT val) { maxCoords[i] = val; }
 
-    boundingBox() {
+            boundingBox() {
 
-      for (int i = 0; i < dim; ++ i) {
-	minCoords[i] = 0;
-	maxCoords[i] = 0;
-      }
+                for (int i = 0; i < dim; ++i) {
+                    minCoords[i] = 0;
+                    maxCoords[i] = 0;
+                }
 
-    };
+            };
 
-    template<typename T>
-    boundingBox(container<T>& _input, int s = -1, int e = -1) {
+            template<typename T>
+            boundingBox(container <T> &_input, int s = -1, int e = -1) {
 
-      if (s < 0 || e < 0) {
-	s = 0;
-	e = _input.size();
-      }
+                if (s < 0 || e < 0) {
+                    s = 0;
+                    e = _input.size();
+                }
 
-      if ((e - s) < 1) return;
+                if ((e - s) < 1) return;
 
-      minCoords = coordinate<dim>(_input[s]);
-      maxCoords = coordinate<dim>(_input[s]);
+                minCoords = coordinate<dim>(_input[s]);
+                maxCoords = coordinate<dim>(_input[s]);
 
-      for (int j = s; j < e; ++ j) {
-	T p = _input[j];
-	for (int i = 0; i < dim; ++ i) {
-	  minCoords[i] = std::min(p[i], minCoords[i]);
-	  maxCoords[i] = std::max(p[i], maxCoords[i]);
-	}
-      }
+                for (int j = s; j < e; ++j) {
+                    T p = _input[j];
+                    for (int i = 0; i < dim; ++i) {
+                        minCoords[i] = std::min(p[i], minCoords[i]);
+                        maxCoords[i] = std::max(p[i], maxCoords[i]);
+                    }
+                }
 
-    }
+            }
 
-    template<typename T>
-    void update(T p) {
-      for (int i = 0; i < dim; ++ i) {
-	minCoords[i] = std::min(p[i], minCoords[i]);
-	maxCoords[i] = std::max(p[i], maxCoords[i]);
-      }
+            template<typename T>
+            void update(T p) {
+                for (int i = 0; i < dim; ++i) {
+                    minCoords[i] = std::min(p[i], minCoords[i]);
+                    maxCoords[i] = std::max(p[i], maxCoords[i]);
+                }
 
-    }
+            }
 
-    template <typename T>
-    bool contains(T x) {
+            template<typename T>
+            bool contains(T x) {
 
-      for (int i = 0; i < dim; ++ i) {
-	if (x[i] < minCoords[i]) return false;
-	if (x[i] > maxCoords[i]) return false;
-      }
-      return true;
+                for (int i = 0; i < dim; ++i) {
+                    if (x[i] < minCoords[i]) return false;
+                    if (x[i] > maxCoords[i]) return false;
+                }
+                return true;
 
-    }
+            }
 
-    ~boundingBox() {
+            ~boundingBox() {
 
-    }
+            }
 
-    relation compare(boundingBox other) {
+            relation compare(boundingBox other) {
 
-      bool exc = false;
-      bool inc = true;
+                bool exc = false;
+                bool inc = true;
 
-      for (int i = 0; i < dim; ++ i) {
-	if (maxCoords[i] < other.minCoords[i] || minCoords[i] > other.maxCoords[i])
-	  exc = true;
+                for (int i = 0; i < dim; ++i) {
+                    if (maxCoords[i] < other.minCoords[i] || minCoords[i] > other.maxCoords[i])
+                        exc = true;
 
-	if (maxCoords[i] < other.maxCoords[i] || minCoords[i] > other.minCoords[i])
-	  inc = false;
-      }
+                    if (maxCoords[i] < other.maxCoords[i] || minCoords[i] > other.minCoords[i])
+                        inc = false;
+                }
 
-      if (exc) return exclude;
-      else if (inc) return include;
-      else return overlap;
+                if (exc) return exclude;
+                else if (inc) return include;
+                else return overlap;
 
-    }
+            }
 
-  };
+        };
 
 
-  template <typename T, typename _floatT = double>
-  class kBuffer: public std::priority_queue<std::pair<_floatT, T>> {
+        template<typename T, typename _floatT = double>
+        class kBuffer : public std::priority_queue<std::pair<_floatT, T>> {
 
-    using queueT = std::priority_queue<std::pair<_floatT, T>>;
+            using queueT = std::priority_queue<std::pair<_floatT, T>>;
 
-  private:
-    int k;
+        private:
+            int k;
 
-  public:
+        public:
 
-    kBuffer(int _k): queueT(), k(_k) { };
+            kBuffer(int _k) : queueT(), k(_k) {};
 
-    void insertK(std::pair<_floatT, T> elem) {
+            void insertK(std::pair<_floatT, T> elem) {
 
-      queueT::push(elem);
+                queueT::push(elem);
 
-      if (queueT::size() > k) queueT::pop();
+                if (queueT::size() > k) queueT::pop();
 
-    };
+            };
 
-    std::pair<_floatT, T> getK() {
+            std::pair<_floatT, T> getK() {
 
-      return queueT::top();
+                return queueT::top();
 
-    }
+            }
 
-    bool hasK() { return queueT::size() >= k; }
-  };
+            bool hasK() { return queueT::size() >= k; }
+        };
 
 
-  // template <typename T, typename _floatT = double>
-  // class kBuffer {
+        template<int dim, typename T, typename _floatT = double>
+        class baseNode {
 
-  // private:
-  //   int k;
-  //   int writePt;
-  //   std::vector<std::pair<_floatT, T>> A;
+        protected:
+            // int weight;
+            boundingBox<dim> box;
 
-  // public:
+            double weight = NAN;
 
-  //   kBuffer(int _k): k(_k), writePt(0) {
+            static const int threshold = 16; // for splitting
 
-  //     A = std::vector<std::pair<_floatT, T>>(k + 1);
+        public:
 
-  //   };
+            using floatT = _floatT;
 
-  //   void insertK(std::pair<_floatT, T> elem) {
+            boundingBox<dim> &getBox() { return box; }
 
-  //     A[writePt ++] = elem;
+            virtual double calcWeights() = 0;
 
-  //     if (writePt >= k + 1) {
+            virtual void setSiblin(baseNode *_siblin) = 0;
 
-  // 	std::nth_element(A.begin(), A.begin() + k, A.end());
+            virtual baseNode<dim, T> *getSiblin() = 0;
 
-  // 	writePt --;
+            virtual bool isRoot() = 0;
 
-  //     }
+            virtual int size() = 0;
 
-  //   };
+            baseNode() {};
 
-  //   std::pair<_floatT, T> getK() {
+            virtual ~baseNode() {};
 
-  //     return A[k - 1];
+            virtual baseNode *insert(container <T> &_input, int s = -1, int e = -1) = 0;
 
-  //   }
+            virtual int erase(container <T> &_input, int s = -1, int e = -1) = 0;
 
-  //   bool hasK() { return writePt >= k; }
+            virtual bool check() = 0;
 
-  //   int size() { return writePt; }
+            virtual void iterate(std::function<void(T)> func) = 0;
 
-  //   std::pair<_floatT, T> top() {
+            virtual double kNNWRangeHelper(T query, floatT radius, boundingBox<dim> bb) = 0;
 
-  //     return A[writePt - 1];
+            double kNNWRange(T query,
+                             floatT radius) {
 
-  //   }
+                boundingBox<dim> bb;
 
-  //   void pop() { writePt --; }
+                for (int i = 0; i < dim; ++i) {
 
-  //   void sort() {
+                    bb.setMin(i, query[i] - radius);
+                    bb.setMax(i, query[i] + radius);
 
-  //     std::sort(A.begin(), A.begin() + k);
+                }
 
-  //   }
+                return kNNWRangeHelper(query, radius, bb);
 
-  // };
+            }
 
+            virtual void kNNHelper(T query, kBuffer<T> &buffer) = 0;
 
-  template<int dim, typename T, typename _floatT = double>
-  class baseNode {
+            virtual void kNNRangeHelper(T query,
+                                        floatT radius,
+                                        boundingBox<dim> bb,
+                                        kBuffer<T> &buffer) = 0;
 
-  protected:
 
-    boundingBox<dim> box;
+            void kNNRange(T query,
+                          floatT radius,
+                          kBuffer<T> &buffer) {
 
-    static const int threshold = 16; // for splitting
+                boundingBox<dim> bb;
 
-  public:
+                for (int i = 0; i < dim; ++i) {
 
-    using floatT = _floatT;
+                    bb.setMin(i, query[i] - radius);
+                    bb.setMax(i, query[i] + radius);
 
-    boundingBox<dim>& getBox() { return box; }
+                }
 
-    virtual void setSiblin(baseNode* _siblin) = 0;
+                kNNRangeHelper(query, radius, bb, buffer);
 
-    virtual baseNode<dim, T>* getSiblin() = 0;
+            }
 
-    virtual bool isRoot() = 0;
+        };
 
-    virtual int size() = 0;
 
-    baseNode() {  };
+        template<int dim, typename T>
+        class internalNode;
 
-    virtual ~baseNode() { };
 
-    virtual baseNode* insert(container<T>& _input, int s = -1, int e = -1) = 0;
+        template<int dim, typename T>
+        class dataNode : public baseNode<dim, T> { // leaf node
 
-    virtual int erase(container<T>& _input, int s = -1, int e = -1) = 0;
+        private:
 
-    virtual bool check() = 0;
+            baseNode<dim, T> *siblin;
 
-    virtual void iterate(std::function<void(T)> func) = 0;
+            container <T> data;
 
-    virtual void kNNHelper(T query, kBuffer<T>& buffer) = 0;
+            container<char> flag;
 
-    virtual void kNNRangeHelper(T query,
-				floatT radius,
-				boundingBox<dim> bb,
-				kBuffer<T>& buffer) = 0;
+            int n;
 
-    void kNNRange(T query,
-		  floatT radius,
-		  kBuffer<T>& buffer) {
+        public:
 
-      boundingBox<dim> bb;
+            int size() { return n; }
 
-      for (int i = 0; i < dim; ++ i) {
+            void setSiblin(baseNode<dim, T> *_siblin) { siblin = _siblin; }
 
-	bb.setMin(i, query[i] - radius);
-	bb.setMax(i, query[i] + radius);
+            baseNode<dim, T> *getSiblin() { return siblin; }
 
-      }
+            bool isRoot() { return false; }
 
-      kNNRangeHelper(query, radius, bb, buffer);
+            double calcWeights() {
+                int i = 0;
+                double sum = 0;
+                for (auto exist: flag) {
+                    if (exist)
+                        sum += *(data[i].attribute);
+                    i++;
+                }
+                return sum;
+            }
 
-    }
+            dataNode(container <T> &_input, int s = -1, int e = -1) {
 
-  };
+                if (s < 0 || e < 0) {
+                    s = 0;
+                    e = _input.size();
+                }
 
+                n = e - s;
 
-  template<int dim, typename T> class internalNode;
+                baseNode<dim, T>::box = boundingBox<dim>(_input, s, e);
 
+                data = container<T>(n);
+                flag = container<char>(n);
 
-  template<int dim, typename T>
-  class dataNode: public baseNode<dim, T> { // leaf node
+                int j = 0;
+                for (int i = s; i < e; ++i) {
+                    data[j] = _input[i];
+                    flag[j] = 1;
+                    j++;
+                }
 
-  private:
+            }
 
-    baseNode<dim, T>* siblin;
+            baseNode<dim, T> *insert(container <T> &_input, int s = -1, int e = -1) {
 
-    container<T> data;
+                if (s < 0 || e < 0) {
+                    s = 0;
+                    e = _input.size();
+                }
 
-    container<char> flag;
+                if (e - s + size() >= baseNode<dim, T>::threshold) {
 
-    int n;
+                    container<T> tmp(e - s + size());
 
-  public:
+                    int i = 0;
+                    for (int j = s; j < e; ++j) tmp[i++] = _input[j];
 
-    int size() { return n; }
+                    iterate([&](T p) { tmp[i++] = p; });
 
-    void setSiblin(baseNode<dim, T>* _siblin) { siblin = _siblin; }
+                    internalNode<dim, T> *newNode = new internalNode<dim, T>(tmp);
 
-    baseNode<dim, T>* getSiblin() { return siblin; }
+                    return newNode;
 
-    bool isRoot() { return false; }
+                } else {
 
-    dataNode(container<T>& _input, int s = -1, int e = -1) {
+                    for (int i = s; i < e; ++i) {
 
-      if (s < 0 || e < 0) {
-	s = 0;
-	e = _input.size();
-      }
+                        baseNode<dim, T>::box.update(_input[i]);
 
-      n = e - s;
+                        data.push_back(_input[i]);
 
-      baseNode<dim, T>::box = boundingBox<dim>(_input, s, e);
+                        flag.push_back(1);
+                    }
 
-      data = container<T>(n);
-      flag = container<char>(n);
+                    n += e - s;
 
-      int j = 0;
-      for (int i = s; i < e; ++ i) {
-	data[j] = _input[i];
-	flag[j] = 1;
-	j++;
-      }
+                    return nullptr;
 
-    }
+                }
 
-    baseNode<dim, T>* insert(container<T>& _input, int s = -1, int e = -1) {
+            }
 
-      if (s < 0 || e < 0) {
-	s = 0;
-	e = _input.size();
-      }
+            int erase(container <T> &_input, int s = -1, int e = -1) {
 
-      if (e - s + size() >= baseNode<dim, T>::threshold) {
+                if (s < 0 || e < 0) {
+                    s = 0;
+                    e = _input.size();
+                }
 
-	container<T> tmp(e - s + size());
+                if (e - s <= 0) return 0;
 
-	int i = 0;
-	for (int j = s; j < e; ++ j) tmp[i++] = _input[j];
+                int erased = 0;
 
-	iterate([&](T p) { tmp[i++] = p; });
+                for (int i = s; i < e; ++i) {
+                    for (int j = 0; j < data.size(); ++j) {
 
-	internalNode<dim, T>* newNode = new internalNode<dim, T>(tmp);
+                        int k = 0;
+                        for (; k < dim; ++k) {
+                            if (data[j][k] != _input[i][k]) {
+                                break;
+                            }
+                        }
 
-	return newNode;
+                        if (k == dim) {
+                            flag[j] = 0;
+                            erased++;
+                        }
 
-      } else {
+                    }
+                }
 
-	for (int i = s; i < e; ++ i) {
+                n -= erased;
 
-	  baseNode<dim, T>::box.update(_input[i]);
+                return erased;
 
-	  data.push_back(_input[i]);
+            }
 
-	  flag.push_back(1);
-	}
+            void iterate(std::function<void(T)> func) {
 
-	n += e - s;
+                int i = 0;
+                for (auto exist: flag) {
 
-	return nullptr;
+                    if (exist) func(data[i]);
+                    i++;
 
-      }
+                }
 
-    }
+            }
 
-    int erase(container<T>& _input, int s = -1, int e = -1) {
+            void kNNHelper(T query,
+                           kBuffer<T> &buffer) {
 
-      if (s < 0 || e < 0) {
-	s = 0;
-	e = _input.size();
-      }
+                iterate([&](T x) { buffer.insertK({query.dist(x), x}); });
 
-      if (e - s <= 0) return 0;
+                if (buffer.hasK()) {
 
-      int erased = 0;
+                    siblin->kNNRange(query, buffer.getK().first, buffer);
 
-      for (int i = s; i < e; ++ i) {
-	for (int j = 0; j < data.size(); ++ j) {
+                } else {
 
-	  int k = 0;
-	  for (; k < dim; ++ k) {
-	    if (data[j][k] != _input[i][k]) {
-	      break;
-	    }
-	  }
+                    siblin->iterate([&](T x) { buffer.insertK({query.dist(x), x}); });
 
-	  if (k == dim) {
-	    flag[j] = 0;
-	    erased ++;
-	  }
+                }
 
-	}
-      }
+            }
 
-      n -= erased;
+            double kNNWRangeHelper(T query,
+                                   typename baseNode<dim, T>::floatT radius,
+                                   boundingBox<dim> bb) {
 
-      return erased;
+                double weights = 0;
+                iterate([&](T x) {
 
-    }
+                    typename baseNode<dim, T>::floatT d = query.dist(x);
+                    if (d <= radius)
+                        weights += *(x.attribute);
 
-    void iterate(std::function<void(T)> func) {
+                });
+                return weights;
+            }
 
-      int i = 0;
-      for (auto exist: flag) {
+            void kNNRangeHelper(T query,
+                                typename baseNode<dim, T>::floatT radius,
+                                boundingBox<dim> bb,
+                                kBuffer<T> &buffer) {
 
-	if (exist) func(data[i]);
-	i++;
+                iterate([&](T x) {
 
-      }
+                    typename baseNode<dim, T>::floatT d = query.dist(x);
 
-    }
+                    if (d <= radius)
+                        buffer.insertK({d, x});
 
-    void kNNHelper(T query,
-		   kBuffer<T>& buffer) {
+                });
 
-      iterate([&](T x) { buffer.insertK({query.dist(x), x}); });
+            }
 
-      if (buffer.hasK()) {
+            bool check() {
 
-	siblin->kNNRange(query, buffer.getK().first, buffer);
+                for (auto x: data) {
 
-      } else {
+                    if (!baseNode<dim, T>::box.contains(x)) return false;
 
-	siblin->iterate([&](T x) { buffer.insertK({query.dist(x), x}); });
+                }
 
-      }
+                return true;
 
-    }
+            }
 
-    void kNNRangeHelper(T query,
-			typename baseNode<dim, T>::floatT radius,
-			boundingBox<dim> bb,
-			kBuffer<T>& buffer) {
+        };
 
-      iterate([&](T x) {
 
-	typename baseNode<dim, T>::floatT d = query.dist(x);
+        template<int dim, typename T>
+        class internalNode : public baseNode<dim, T> { // internal node
 
-	if (d <= radius)
-	  buffer.insertK({d, x});
+        protected:
 
-      });
+            baseNode<dim, T> *siblin;
 
-    }
+            baseNode<dim, T> *left = nullptr;
 
-    bool check() {
+            baseNode<dim, T> *right = nullptr;
 
-      for (auto x: data) {
+            int splitDim = -1;
 
-	if (!baseNode<dim, T>::box.contains(x)) return false;
+            typename baseNode<dim, T>::floatT split = -1;
 
-      }
+            int n;
 
-      return true;
+        public:
 
-    }
+            int size() { return n; }
 
-  };
+            bool isRoot() { return false; }
 
+            void setSiblin(baseNode<dim, T> *_siblin) { siblin = _siblin; }
 
-  template<int dim, typename T>
-  class internalNode: public baseNode<dim, T> { // internal node
+            baseNode<dim, T> *getSiblin() { return siblin; }
 
-  protected:
+            double calcWeights() {
+                this->weight = this->left->calcWeights() + this->right->calcWeights();
+                return this->weight;
+            }
 
-    baseNode<dim, T>* siblin;
+            internalNode(container <T> &_input, int s = -1, int e = -1, int _splitDim = 0) :
+                    splitDim(_splitDim) {
 
-    baseNode<dim, T>* left = nullptr;
+                if (s < 0 || e < 0) {
+                    s = 0;
+                    e = _input.size();
+                }
 
-    baseNode<dim, T>* right = nullptr;
+                n = e - s;
 
-    int splitDim = -1;
+                if (n < 2)
+                    throw std::runtime_error("dynKdTree: error, construction requires input size >= 2.");
 
-    typename baseNode<dim, T>::floatT split = -1;
+                baseNode<dim, T>::box = boundingBox<dim>(_input, s, e);
 
-    int n;
+                int leftSize;
 
-  public:
+                if (spatialMedian) {
 
-    int size() { return n; }
+                    split = (baseNode<dim, T>::box.getMax()[splitDim] +
+                             baseNode<dim, T>::box.getMin()[splitDim]) / 2;
 
-    bool isRoot() { return false; }
+                    if (e - s < 2000) {
+                        auto middle = std::partition(_input.begin() + s, _input.begin() + e, [&](T &elem) {
+                            return elem[splitDim] < split;
+                        });
+                        leftSize = std::distance(_input.begin(), middle) - s;
+                    } else {
+                        parlay::sequence<bool> flag(e - s);
+                        parlay::parallel_for(0, e - s, [&](size_t i) {
+                            flag[i] = _input[s + i][splitDim] >= split;
+                        });
+                        leftSize = split_two(_input.cut(s, e), flag);
+                    }
 
-    void setSiblin(baseNode<dim, T>* _siblin) { siblin = _siblin; }
+                    if (leftSize == 0 || leftSize == n) {
+                        splitDim = (splitDim + 1) % dim;
+                        goto computeObjectMedian;
+                    }
 
-    baseNode<dim, T>* getSiblin() { return siblin; }
+                } else {
+                    computeObjectMedian:
 
-    internalNode(container<T>& _input, int s = -1, int e = -1, int _splitDim = 0):
-      splitDim(_splitDim) {
+                    if (n < 2000) {
+                        std::nth_element(_input.begin() + s,
+                                         _input.begin() + s + (e - s) / 2,
+                                         _input.begin() + e,
+                                         [&](T &a, T &b) {
+                                             return a[splitDim] < b[splitDim];
+                                         });
+                    } else {
+                        parlay::sort_inplace(_input.cut(s, e), [&](T a, T b) {
+                            return a[splitDim] < b[splitDim];
+                        });
+                    }
+                    split = _input[s + (e - s) / 2][splitDim];
+                    leftSize = s + (e - s) / 2 - s;
+                }
 
-      if (s < 0 || e < 0) {
-	s = 0;
-	e = _input.size();
-      }
+                if (leftSize < baseNode<dim, T>::threshold) {
+                    left = new dataNode<dim, T>(_input, s, s + leftSize);
+                } else {
+                    left = new internalNode(_input, s, s + leftSize, (splitDim + 1) % dim);
+                }
 
-      n = e - s;
+                int rightSize = e - s - leftSize;;
 
-      if (n < 2)
-	throw std::runtime_error("dynKdTree: error, construction requires input size >= 2.");
+                if (rightSize < baseNode<dim, T>::threshold) {
+                    right = new dataNode<dim, T>(_input, s + leftSize, e);
+                } else {
+                    right = new internalNode(_input, s + leftSize, e, (splitDim + 1) % dim);
+                }
 
-      baseNode<dim, T>::box = boundingBox<dim>(_input, s, e);
+                left->setSiblin(right);
+                right->setSiblin(left);
 
-      int leftSize;
+            }
 
-      if (spatialMedian) {
+            baseNode<dim, T> *insert(container <T> &_input, int s = -1, int e = -1) {
 
-	split = (baseNode<dim, T>::box.getMax()[splitDim] +
-		 baseNode<dim, T>::box.getMin()[splitDim]) / 2;
+                if (s < 0 || e < 0) {
+                    s = 0;
+                    e = _input.size();
+                }
 
-	if (e - s < 2000) {
-	  auto middle = std::partition(_input.begin() + s, _input.begin() + e, [&](T& elem) {
-	    return elem[splitDim] < split;
-	  });
+                n += e - s;
 
-	  leftSize = std::distance(_input.begin(), middle) - s;
-	} else {
-	  parlay::sequence<bool> flag(e - s);
+                for (int i = s; i < e; ++i) {
+                    baseNode<dim, T>::box.update(_input[i]);
+                }
 
-	  parlay::parallel_for(0, e - s, [&](size_t i) {
-	    flag[i] = _input[s + i][splitDim] >= split;
-	  });
+                int middleIdx;
 
-	  leftSize = split_two(_input.cut(s, e), flag);
+                if (e - s < 2000) {
+                    auto middle = std::partition(_input.begin() + s, _input.begin() + e, [&](T &elem) {
+                        return elem[splitDim] < split;
+                    });
 
-	}
+                    middleIdx = std::distance(_input.begin(), middle);
+                } else {
+                    parlay::sequence<bool> flag(e - s);
+                    parlay::parallel_for(0, e - s, [&](size_t i) {
+                        flag[i] = _input[s + i][splitDim] >= split;
+                    });
 
-	if (leftSize == 0 || leftSize == n) {
-	  splitDim = (splitDim + 1) % dim;
-	  goto computeObjectMedian;
-	}
+                    middleIdx = s + split_two(_input.cut(s, e), flag);
+                }
 
-      } else {
-      computeObjectMedian:
+                auto insertLeft = [&]() {
+                    auto newLeft = left->insert(_input, s, middleIdx);
+                    if (newLeft) {
+                        delete left;
+                        left = newLeft;
 
-	if (n < 2000) {
-	  std::nth_element(_input.begin() + s,
-			   _input.begin() + s + (e - s) / 2,
-			   _input.begin() + e,
-			   [&](T& a, T& b){
-			     return a[splitDim] < b[splitDim];
-			   });
-	} else {
-	  parlay::sort_inplace(_input.cut(s, e), [&](T a, T b){
-	    return a[splitDim] < b[splitDim];
-	  });
-	}
+                        left->setSiblin(right);
+                        right->setSiblin(left);
+                    }
+                };
 
-	split = _input[s + (e - s) / 2][splitDim];
+                auto insertRight = [&]() {
 
-	leftSize = s + (e - s) / 2 - s;
+                    auto newRight = right->insert(_input, middleIdx, e);
 
-      }
+                    if (newRight) {
+                        delete right;
+                        right = newRight;
 
-      if (leftSize < baseNode<dim, T>::threshold) {
+                        left->setSiblin(right);
+                        right->setSiblin(left);
+                    }
+                };
 
-	left = new dataNode<dim, T>(_input, s, s + leftSize);
+                if (e - s < 2000) {
+                    insertLeft();
+                    insertRight();
+                } else parlay::par_do(insertLeft, insertRight);
+                return nullptr;
+            }
 
-      } else {
+            int erase(container <T> &_input, int s = -1, int e = -1) {
 
-	left = new internalNode(_input, s, s + leftSize, (splitDim + 1) % dim);
+                if (s < 0 || e < 0) {
+                    s = 0;
+                    e = _input.size();
+                }
 
-      }
+                if (e - s <= 0) return 0;
 
-      int rightSize = e - s - leftSize;;
+                int middleIdx;
 
-      if (rightSize < baseNode<dim, T>::threshold) {
+                if (e - s < 2000) {
+                    auto middle = std::partition(_input.begin() + s, _input.begin() + e, [&](T &elem) {
+                        return elem[splitDim] < split;
+                    });
 
-	right = new dataNode<dim, T>(_input, s + leftSize, e);
+                    middleIdx = std::distance(_input.begin(), middle);
+                } else {
+                    parlay::sequence<bool> flag(e - s);
 
-      } else {
+                    parlay::parallel_for(0, e - s, [&](size_t i) {
+                        flag[i] = _input[s + i][splitDim] >= split;
+                    });
 
-	right = new internalNode(_input, s + leftSize, e, (splitDim + 1) % dim);
+                    middleIdx = s + split_two(_input.cut(s, e), flag);
+                }
 
-      }
+                int leftErased, rightErased;
 
-      left->setSiblin(right);
+                auto eraseLeft = [&]() {
+                    leftErased = left->erase(_input, s, middleIdx);
+                };
 
-      right->setSiblin(left);
+                auto eraseRight = [&]() {
+                    rightErased = right->erase(_input, middleIdx, e);
+                };
 
-    }
+                if (e - s < 2000) {
 
-    baseNode<dim, T>* insert(container<T>& _input, int s = -1, int e = -1) {
+                    eraseLeft();
+                    eraseRight();
 
-      if (s < 0 || e < 0) {
-	s = 0;
-	e = _input.size();
-      }
+                } else parlay::par_do(eraseLeft, eraseRight);
 
-      n += e - s;
+                n -= leftErased + rightErased;
 
-      for (int i = s; i < e; ++ i) {
+                return leftErased + rightErased;
 
-	baseNode<dim, T>::box.update(_input[i]);
+            }
 
-      }
+            ~internalNode() {
 
-      int middleIdx;
+                delete left;
+                delete right;
 
-      if (e - s < 2000) {
-	auto middle = std::partition(_input.begin() + s, _input.begin() + e, [&](T& elem) {
-	  return elem[splitDim] < split;
-	});
+            }
 
-	middleIdx = std::distance(_input.begin(), middle);
-      } else {
-	parlay::sequence<bool> flag(e - s);
+            void iterate(std::function<void(T)> func) {
 
-	parlay::parallel_for(0, e - s, [&](size_t i) {
-	  flag[i] = _input[s + i][splitDim] >= split;
-	});
+                left->iterate(func);
 
-	middleIdx = s + split_two(_input.cut(s, e), flag);
-      }
+                right->iterate(func);
 
-      auto insertLeft = [&] () {
+            }
 
-	auto newLeft = left->insert(_input, s, middleIdx);
+            void kNNHelper(T query,
+                           kBuffer<T> &buffer) {
 
-	if (newLeft) {
-	  delete left;
-	  left = newLeft;
+                if (query[splitDim] < split) left->kNNHelper(query, buffer);
+                else right->kNNHelper(query, buffer);
 
-	  left->setSiblin(right);
-	  right->setSiblin(left);
-	}
+                if (buffer.hasK()) {
 
-      };
+                    siblin->kNNRange(query, buffer.getK().first, buffer);
 
-      auto insertRight = [&] () {
+                } else {
 
-	auto newRight = right->insert(_input, middleIdx, e);
+                    siblin->iterate([&](T x) { buffer.insertK({query.dist(x), x}); });
 
-	if (newRight) {
-	  delete right;
-	  right = newRight;
+                }
 
-	  left->setSiblin(right);
-	  right->setSiblin(left);
-	}
+            }
 
-      };
+            double kNNWRangeHelper(T query,
+                                   typename baseNode<dim, T>::floatT radius,
+                                   boundingBox<dim> bb) {
 
-      if (e - s < 2000) {
+                typename boundingBox<dim>::relation rel = bb.compare(baseNode<dim, T>::box);
 
-	insertLeft();
-	insertRight();
+                if (rel == boundingBox<dim>::relation::include) {
 
-      } else parlay::par_do(insertLeft, insertRight);
+                    return this->weight;
 
-      return nullptr;
+                } else if (rel == boundingBox<dim>::relation::overlap) {
 
-    }
+                    return left->kNNWRangeHelper(query, radius, bb) + right->kNNWRangeHelper(query, radius, bb);
 
-    int erase(container<T>& _input, int s = -1, int e = -1) {
+                }
 
-      if (s < 0 || e < 0) {
-	s = 0;
-	e = _input.size();
-      }
+            }
 
-      if (e - s <= 0) return 0;
 
-      int middleIdx;
+            void kNNRangeHelper(T query,
+                                typename baseNode<dim, T>::floatT radius,
+                                boundingBox<dim> bb,
+                                kBuffer<T> &buffer) {
 
-      if (e - s < 2000) {
-	auto middle = std::partition(_input.begin() + s, _input.begin() + e, [&](T& elem) {
-	  return elem[splitDim] < split;
-	});
+                typename boundingBox<dim>::relation rel = bb.compare(baseNode<dim, T>::box);
 
-	middleIdx = std::distance(_input.begin(), middle);
-      } else {
-	parlay::sequence<bool> flag(e - s);
+                if (rel == boundingBox<dim>::relation::include) {
 
-	parlay::parallel_for(0, e - s, [&](size_t i) {
-	  flag[i] = _input[s + i][splitDim] >= split;
-	});
+                    iterate([&](T x) {
 
-	middleIdx = s + split_two(_input.cut(s, e), flag);
-      }
+                        typename baseNode<dim, T>::floatT d = query.dist(x);
 
-      int leftErased, rightErased;
+                        if (d <= radius)
+                            buffer.insertK({d, x});
 
-      auto eraseLeft = [&] () {
-	leftErased = left->erase(_input, s, middleIdx);
-      };
+                    });
 
-      auto eraseRight = [&] () {
-	rightErased = right->erase(_input, middleIdx, e);
-      };
+                } else if (rel == boundingBox<dim>::relation::overlap) {
 
-      if (e - s < 2000) {
+                    left->kNNRangeHelper(query, radius, bb, buffer);
+                    right->kNNRangeHelper(query, radius, bb, buffer);
 
-	eraseLeft();
-	eraseRight();
+                }
 
-      } else parlay::par_do(eraseLeft, eraseRight);
+            }
 
-      n -= leftErased + rightErased;
+            bool check() {
 
-      return leftErased + rightErased;
+                if (left->getSiblin() != right) return false;
+                if (right->getSiblin() != left) return false;
 
-    }
+                boundingBox<dim> leftBox = left->getBox();
+                boundingBox<dim> rightBox = right->getBox();
 
-    ~internalNode() {
+                if (!baseNode<dim, T>::box.contains(leftBox.getMin()) ||
+                    !baseNode<dim, T>::box.contains(leftBox.getMax())) {
+                    return false;
+                }
 
-      delete left;
-      delete right;
+                return left->check() && right->check();
 
-    }
+            }
 
-    void iterate(std::function<void(T)> func) {
+        };
 
-      left->iterate(func);
 
-      right->iterate(func);
+        template<int dim, typename T>
+        class rootNode : public internalNode<dim, T> { // root node
 
-    }
+        public:
 
-    void kNNHelper(T query,
-		   kBuffer<T>& buffer) {
+            baseNode<dim, T> *getSiblin() {
 
-      if (query[splitDim] < split) left->kNNHelper(query, buffer);
-      else right->kNNHelper(query, buffer);
+                throw std::runtime_error("dynKdTree: error, cannot get siblin of root\n");
 
-      if (buffer.hasK()) {
+            }
 
-	siblin->kNNRange(query, buffer.getK().first, buffer);
+            bool isRoot() { return true; }
 
-      } else {
+            void iterate(std::function<void(T)> func) {
 
-	siblin->iterate([&](T x) { buffer.insertK({query.dist(x), x}); });
+                internalNode<dim, T>::left->iterate(func);
 
-      }
+                internalNode<dim, T>::right->iterate(func);
 
-    }
+            }
 
-    void kNNRangeHelper(T query,
-			typename baseNode<dim, T>::floatT radius,
-			boundingBox<dim> bb,
-			kBuffer<T>& buffer) {
+            void kNNHelper(T query,
+                           kBuffer<T> &buffer) {
 
-      typename boundingBox<dim>::relation rel = bb.compare(baseNode<dim, T>::box);
+                if (query[internalNode<dim, T>::splitDim] < internalNode<dim, T>::split)
+                    internalNode<dim, T>::left->kNNHelper(query, buffer);
+                else
+                    internalNode<dim, T>::right->kNNHelper(query, buffer);
 
-      if (rel == boundingBox<dim>::relation::include) {
+            }
 
-	iterate([&](T x) {
+            rootNode(container <T> &_input, int s = -1, int e = -1, int _splitDim = 0) :
+                    internalNode<dim, T>(_input, s, e, _splitDim) {};
 
-	  typename baseNode<dim, T>::floatT d = query.dist(x);
+            container <T> kNN(T query, int k) {
 
-	  if (d <= radius)
-	    buffer.insertK({d, x});
+                kBuffer<T> buffer(k);
 
-	});
+                kNNHelper(query, buffer);
 
-      } else if (rel == boundingBox<dim>::relation::overlap) {
+                int kOut = buffer.size();
 
-	left->kNNRangeHelper(query, radius, bb, buffer);
-	right->kNNRangeHelper(query, radius, bb, buffer);
+                if (kOut < k) {
 
-      }
+                    std::cout << "dynKdTree: warning, kNN outputs ";
+                    std::cout << kOut << ", fewer than k.\n";
 
-    }
+                }
 
-    bool check() {
+                auto nns = container<T>(kOut);
 
-      if (left->getSiblin() != right) return false;
-      if (right->getSiblin() != left) return false;
+                // buffer.sort();
 
-      boundingBox<dim> leftBox = left->getBox();
-      boundingBox<dim> rightBox = right->getBox();
+                for (int i = 0; i < kOut; ++i) {
+                    nns[kOut - 1 - i] = buffer.top().second;
+                    buffer.pop();
+                }
 
-      if (!baseNode<dim, T>::box.contains(leftBox.getMin()) ||
-	  !baseNode<dim, T>::box.contains(leftBox.getMax())) {
-	return false;
-      }
+                return nns;
+            }
 
-      return left->check() && right->check();
+        };
 
-    }
 
-  };
-
-
-  template<int dim, typename T>
-  class rootNode: public internalNode<dim, T> { // root node
-
-  public:
-
-    baseNode<dim, T>* getSiblin() {
-
-      throw std::runtime_error("dynKdTree: error, cannot get siblin of root\n");
-
-    }
-
-    bool isRoot() { return true; }
-
-    void iterate(std::function<void(T)> func) {
-
-      internalNode<dim, T>::left->iterate(func);
-
-      internalNode<dim, T>::right->iterate(func);
-
-    }
-
-    void kNNHelper(T query,
-		   kBuffer<T>& buffer) {
-
-      if (query[internalNode<dim, T>::splitDim] < internalNode<dim, T>::split)
-	internalNode<dim, T>::left->kNNHelper(query, buffer);
-      else
-	internalNode<dim, T>::right->kNNHelper(query, buffer);
-
-    }
-
-    rootNode(container<T>& _input, int s = -1, int e = -1, int _splitDim = 0):
-      internalNode<dim, T>(_input, s, e, _splitDim) { };
-
-    container<T> kNN(T query, int k) {
-
-      kBuffer<T> buffer(k);
-
-      kNNHelper(query, buffer);
-
-      int kOut = buffer.size();
-
-      if (kOut < k) {
-
-	std::cout << "dynKdTree: warning, kNN outputs ";
-	std::cout << kOut << ", fewer than k.\n";
-
-      }
-
-      auto nns = container<T>(kOut);
-
-      // buffer.sort();
-
-      for (int i = 0; i < kOut; ++ i) {
-	nns[kOut - 1 - i] = buffer.top().second;
-	buffer.pop();
-      }
-
-      return nns;
-    }
-
-  };
-
-
-}; // End namespace dynKdTree
+    }; // End namespace dynKdTree
 
 }; // End namespace pargeo

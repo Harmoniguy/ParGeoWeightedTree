@@ -1,0 +1,2 @@
+/usr/bin/ar qc libsamplingHull3dLib.a CMakeFiles/samplingHull3dLib.dir/hull.cpp.o CMakeFiles/samplingHull3dLib.dir/hullTest.cpp.o
+/usr/bin/ranlib libsamplingHull3dLib.a
