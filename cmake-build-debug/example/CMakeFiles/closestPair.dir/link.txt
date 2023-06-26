@@ -1,1 +1,0 @@
-/usr/bin/c++ -DHOMEGROWN -pthread -mcx16 -O3 -DNDEBUG -fPIC  -g CMakeFiles/closestPair.dir/closestPair.cpp.o -o closestPair  ../src/closestPair/libclosestPairLib.a 

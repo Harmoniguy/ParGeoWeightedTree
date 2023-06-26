@@ -1,1 +1,0 @@
-/usr/bin/c++ -DHOMEGROWN -pthread -mcx16 -O3 -DNDEBUG -fPIC  -g CMakeFiles/dynKdTree_test.dir/dynKdTree_test.cpp.o -o dynKdTree_test  ../lib/libgtest.a 

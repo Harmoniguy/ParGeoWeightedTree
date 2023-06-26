@@ -1,2 +1,0 @@
-/usr/bin/ar qc libsamplingSebLib.a CMakeFiles/samplingSebLib.dir/seb.cpp.o
-/usr/bin/ranlib libsamplingSebLib.a

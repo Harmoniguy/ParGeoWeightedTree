@@ -1,1 +1,0 @@
-/usr/bin/c++ -DHOMEGROWN -pthread -mcx16 -O3 -DNDEBUG -fPIC  -g CMakeFiles/smallestEnclosingBall.dir/smallestEnclosingBall.cpp.o -o smallestEnclosingBall  ../src/enclosingBall/sampling/libsamplingSebLib.a 

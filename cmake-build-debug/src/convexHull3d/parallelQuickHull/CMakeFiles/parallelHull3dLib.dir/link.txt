@@ -1,2 +1,0 @@
-/usr/bin/ar qc libparallelHull3dLib.a CMakeFiles/parallelHull3dLib.dir/hull.cpp.o
-/usr/bin/ranlib libparallelHull3dLib.a

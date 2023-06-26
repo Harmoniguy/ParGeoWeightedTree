@@ -1,1 +1,0 @@
-/usr/bin/c++ -DHOMEGROWN -pthread -mcx16 -O3 -DNDEBUG -fPIC  -g CMakeFiles/graphGenerator.dir/graphGenerator.cpp.o -o graphGenerator  ../src/delaunayTriangulation/libdelaunay2dLib.a ../src/euclideanMst/libemstLib.a ../src/spatialGraph/libspatialGraphLib.a ../src/delaunayTriangulation/libdelaunay2dLib.a 

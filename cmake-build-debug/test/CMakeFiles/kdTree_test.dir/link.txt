@@ -1,1 +1,0 @@
-/usr/bin/c++ -DHOMEGROWN -pthread -mcx16 -O3 -DNDEBUG -fPIC  -g CMakeFiles/kdTree_test.dir/kdTree_test.cpp.o -o kdTree_test  ../lib/libgtest.a 

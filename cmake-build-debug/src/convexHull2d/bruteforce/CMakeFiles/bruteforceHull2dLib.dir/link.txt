@@ -1,2 +1,0 @@
-/usr/bin/ar qc libbruteforceHull2dLib.a CMakeFiles/bruteforceHull2dLib.dir/hull.cpp.o
-/usr/bin/ranlib libbruteforceHull2dLib.a

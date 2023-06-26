@@ -1,2 +1,0 @@
-/usr/bin/ar qc libdelaunay2dLib.a CMakeFiles/delaunay2dLib.dir/incremental/delaunay.cpp.o
-/usr/bin/ranlib libdelaunay2dLib.a

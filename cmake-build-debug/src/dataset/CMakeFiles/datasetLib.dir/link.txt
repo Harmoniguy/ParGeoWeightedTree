@@ -1,2 +1,0 @@
-/usr/bin/ar qc libdatasetLib.a CMakeFiles/datasetLib.dir/seedSpreader.cpp.o
-/usr/bin/ranlib libdatasetLib.a

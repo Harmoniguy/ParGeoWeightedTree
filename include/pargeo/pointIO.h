@@ -122,6 +122,18 @@ namespace pargeo {
             return points;
         }
 
+        template<class pointT, class Seq>
+        parlay::sequence<pointT> parsePointsWnotFile(Seq W, Seq We) {
+            using coord = double;
+            int d = pointT::dim;
+            size_t n = W.size() / d;
+
+            auto points = parlay::tabulate(n, [&](size_t i) -> pointT {
+                return pointT(W.cut(d * i, d * (i + 1)), We + i);
+            });
+            return points;
+        }
+
         template<class pointT>
         parlay::sequence<pointT> readPointsFromFile(char const *fname) {
             parlay::sequence<char> S = pargeo::IO::readStringFromFile(fname);

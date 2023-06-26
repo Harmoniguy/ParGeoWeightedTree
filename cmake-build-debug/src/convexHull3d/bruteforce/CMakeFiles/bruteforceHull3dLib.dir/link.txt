@@ -1,2 +1,0 @@
-/usr/bin/ar qc libbruteforceHull3dLib.a CMakeFiles/bruteforceHull3dLib.dir/hull.cpp.o
-/usr/bin/ranlib libbruteforceHull3dLib.a
