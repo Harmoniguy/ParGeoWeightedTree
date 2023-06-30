@@ -108,28 +108,14 @@ namespace pargeo {
             return points;
         }
 
-        template<class pointT, class Seq>
-        parlay::sequence<pointT> parsePointsW(Seq W, Seq We) {
-            using coord = double;
-            int d = pointT::dim;
-            size_t n = W.size() / d;
-            auto a = parlay::tabulate(d * n, [&](size_t i) -> coord {
-                return atof(W[i]);
-            });
-            auto points = parlay::tabulate(n, [&](size_t i) -> pointT {
-                return pointT(a.cut(d * i, d * (i + 1)), We + i);
-            });
-            return points;
-        }
 
         template<class pointT, class Seq>
-        parlay::sequence<pointT> parsePointsWnotFile(Seq W, Seq We) {
-            using coord = double;
+        parlay::sequence<pointT> parsePointsW(Seq W, std::vector<double>& We) {
             int d = pointT::dim;
             size_t n = W.size() / d;
 
             auto points = parlay::tabulate(n, [&](size_t i) -> pointT {
-                return pointT(W.cut(d * i, d * (i + 1)), We + i);
+                return pointT(W.cut(d * i, d * (i + 1)), We.data()+i);
             });
             return points;
         }

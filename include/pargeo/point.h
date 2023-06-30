@@ -47,7 +47,10 @@ namespace pargeo {
         _point(parlay::slice<_tIn *, _tIn *> p) {
             for (int i = 0; i < _dim; ++i) x[i] = (_tData) p[i];
         }
-
+        template<class _tIn>
+        _point(parlay::slice<_tIn *, _tIn *> p, _tAtt _attribute) : attribute(_attribute) {
+            for (int i = 0; i < _dim; ++i) x[i] = (_tData) p[i];
+        }
         void setEmpty() { x[0] = empty; }
 
         bool isEmpty() { return x[0] == empty; }

@@ -15,8 +15,8 @@
 
 using json = nlohmann::json;
 
-json create_response(std::string status, double time, std::vector<double> result){
-
+json create_response_to_query_message(std::string status, double time, std::vector<double> result) {
+    //TODO: fix time with pargeo::time
     json response;
     response["status"] = status;
     response["time"] = time;
@@ -24,9 +24,26 @@ json create_response(std::string status, double time, std::vector<double> result
     return response;
 }
 
+json create_response_error(double time, const std::string &result) {
+    //TODO: fix time with pargeo::time
+    json response;
+    response["status"] = "ERROR";
+    response["time"] = time;
+    response["result"] = result;
+    return response;
+}
+
+json create_response_to_creation_message(std::string status, double time) {
+    //TODO: fix time with pargeo::time
+    json response;
+    response["status"] = status;
+    response["time"] = time;
+    response["result"] = nullptr;
+    return response;
+}
+
 template<typename T>
-std::vector<T> flatten(std::vector<std::vector<T>> const &vec)
-{
+std::vector<T> flatten(std::vector<std::vector<T>> const &vec) {
     std::vector<T> flattened;
     for (auto const &v: vec) {
         flattened.insert(flattened.end(), v.begin(), v.end());
@@ -34,20 +51,26 @@ std::vector<T> flatten(std::vector<std::vector<T>> const &vec)
     return flattened;
 }
 
-template <int dim>
-inline void createStruct(std::vector<std::vector<double>> points, size_t n){
-    parlay::sequence<double> initialWeights(n, 1);
-    std::vector<double> flattenedPoints = flatten(points);
-    parlay::sequence<double> seqPoints(flattenedPoints.begin(), flattenedPoints.end());
-    auto a = pargeo::pointIO::parsePointsWnotFile<pargeo::wpoint<dim>>(seqPoints, initialWeights);
+template<int dim>
+pargeo::dynKdTree::rootNode<dim, pargeo::point<dim>> *
+createStruct(parlay::sequence<pargeo::point<dim>> points, std::vector<double> &weights) {
+    size_t n = points.size();
+    auto *tree = new pargeo::dynKdTree::rootNode<dim, pargeo::point<dim>>(points, 0, n / 2);
+    return tree;
 }
 
-int main(int argc, char *argv[]) {
+template<int dim>
+void mainloop() {
+    using pargeo::dynKdTree::rootNode;
+    using pargeo::point;
 
+    parlay::sequence<pargeo::wpoint<dim>> points;
+    std::unique_ptr<rootNode<dim, point<dim>>> tree;
     json message;
     json response;
     std::string message_str;
-    std::vector<double> empty_vector;
+    std::vector<double> weights;
+
 
     while (true) {
         std::getline(std::cin, message_str);
@@ -63,68 +86,72 @@ int main(int argc, char *argv[]) {
 
             // Read the weights into a vector
             // TODO: Use these to run the query.
-            std::vector<double> weights = message["weights"].template get<std::vector<double>>();
-
-            // std::cout << "\tweights: " << std::endl;
-            // for (double w : weights) {
-            //     std::cout << "\t\t" << w << std::endl;
-            // }
+            std::vector<double> NewWeights = message["weights"].template get<std::vector<double>>();
+            for (int i = 0; i < NewWeights.size(); i++) {
+                weights[i] = NewWeights[i];
+            }
+            tree->calcWeights();
+            size_t n = NewWeights.size();
+            std::vector<double> sums(n, NAN);
+            parlay::parallel_for(0, n, [&](size_t i) {
+                sums[i] = tree->kNNWRange(points[i], radius);
+            });
 
             // Generate response
             // TODO: Update with actual result.
-            std::vector<double> query_result{0.001, 0.02};
-            response = create_response("OK", 0.001, query_result);
+            //std::vector<double> query_result{0.001, 0.02};
+            response = create_response_to_query_message("OK", 0.001, sums);
             std::cout << response.dump() << std::endl;
         } else if (message_type == "build-datastructure") {
 
-            // Get the dimension
-            int dimension = message["dimension"].template get<int>();
+
 
             // std::cout << "\tdimension: " << dimension << std::endl;
 
             // Read the points into a vector.
             // TODO: Use these to build the data-structure
-            std::vector<std::vector<double>>points = message["points"].template get<std::vector<std::vector<double>>>();
-            size_t n = points.size();
-            // This is stupid but is for the templated static compiler.
-            switch (dimension) {
-                case 2:
-                    createStruct<2>(points, n);
-                    break;
-                case 3:
-                    createStruct<3>(points, n);
-                    break;
-                case 4:
-                    createStruct<4>(points, n);
-                    break;
-                case 5:
-                    createStruct<5>(points, n);
-                    break;
-                case 6:
-                    createStruct<6>(points, n);
-                    break;
-                case 7:
-                    createStruct<7>(points, n);
-                    break;
-                default:
-                    throw std::runtime_error("Dimension not yet added to example.");
-            }
+            std::vector<double> pointsVector = message["points"].template get<std::vector<double>>();
+            weights = std::vector<double>(pointsVector.size(), NAN);
+            parlay::sequence<double> seqPoints(pointsVector.begin(), pointsVector.end());
+            points = pargeo::pointIO::parsePointsW<pargeo::wpoint<dim>>(seqPoints, weights);
+            tree.reset(createStruct<dim>(points, weights));
+
             // std::cout << "\tpoints: " << std::endl;
             // for (std::vector<double> p : points) {
             //     std::cout << "\t\t" << p[0] << ", " << p[1] << ", " << p[2] << std::endl;
             // }
-
             // TODO: Do any error handling required from ParGeo.
 
 
-            response = create_response("OK", 0.001, empty_vector);
+
+            response = create_response_to_creation_message("OK", 0.001);
             std::cout << response.dump() << std::endl;
         } else if (message_type == "exit") {
             exit(0);
         } else {
-            response = create_response("ERROR", 0, empty_vector);
+            response = create_response_error(0, "There was no recognized message");
             std::cout << response.dump() << std::endl;
         }
+    }
+}
+
+int main(int argc, char *argv[]) {
+#define MAINLOOPMACRO(d) \
+    case d:              \
+        mainloop<d>();   \
+        break
+
+    int dimension = atoi(argv[1]);
+    switch (dimension) {
+        MAINLOOPMACRO(2);
+        MAINLOOPMACRO(3);
+        MAINLOOPMACRO(4);
+        MAINLOOPMACRO(5);
+        MAINLOOPMACRO(6);
+        MAINLOOPMACRO(7);
+
+        default:
+            throw std::runtime_error("Dimension not yet added to example.");
     }
     return 0;
 }
