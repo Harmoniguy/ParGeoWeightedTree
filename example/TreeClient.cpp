@@ -25,7 +25,6 @@ json create_response_to_query_message(std::string status, double time, std::vect
 }
 
 json create_response_error(double time, const std::string &result) {
-    //TODO: fix time with pargeo::time
     json response;
     response["status"] = "ERROR";
     response["time"] = time;
@@ -33,8 +32,7 @@ json create_response_error(double time, const std::string &result) {
     return response;
 }
 
-json create_response_to_creation_message(std::string status, double time) {
-    //TODO: fix time with pargeo::time
+json create_response_to_creation_message(const std::string& status, double time) {
     json response;
     response["status"] = status;
     response["time"] = time;
@@ -70,26 +68,24 @@ void mainloop() {
     json response;
     std::string message_str;
     std::vector<double> weights;
-
+    pargeo::timer t;
 
     while (true) {
         std::getline(std::cin, message_str);
-        //std::cout<<"Received:"<<message_str<<std::endl;
 
         message = json::parse(message_str.c_str());
         std::string message_type = message["type"].template get<std::string>();
 
         if (message_type == "run-query") {
-
+            t.start();
             // The query radius
             double radius = message["radius"].template get<double>();
 
             // Read the weights into a vector
-            // TODO: Use these to run the query.
             std::vector<double> NewWeights = message["weights"].template get<std::vector<double>>();
-            for (int i = 0; i < NewWeights.size(); i++) {
+            for (int i = 0; i < NewWeights.size(); i++)
                 weights[i] = NewWeights[i];
-            }
+
             tree->calcWeights();
             size_t n = NewWeights.size();
             std::vector<double> sums(n, NAN);
@@ -98,34 +94,23 @@ void mainloop() {
             });
 
             // Generate response
-            // TODO: Update with actual result.
-            //std::vector<double> query_result{0.001, 0.02};
-            response = create_response_to_query_message("OK", 0.001, sums);
+            response = create_response_to_query_message("OK", t.get_next(), sums);
             std::cout << response.dump() << std::endl;
+            t.stop();
+            t.reset();
         } else if (message_type == "build-datastructure") {
-
-
-
-            // std::cout << "\tdimension: " << dimension << std::endl;
-
             // Read the points into a vector.
-            // TODO: Use these to build the data-structure
+            t.start();
             std::vector<double> pointsVector = message["points"].template get<std::vector<double>>();
             weights = std::vector<double>(pointsVector.size(), NAN);
             parlay::sequence<double> seqPoints(pointsVector.begin(), pointsVector.end());
             points = pargeo::pointIO::parsePointsW<pargeo::wpoint<dim>>(seqPoints, weights);
             tree.reset(createStruct<dim>(points, weights));
 
-            // std::cout << "\tpoints: " << std::endl;
-            // for (std::vector<double> p : points) {
-            //     std::cout << "\t\t" << p[0] << ", " << p[1] << ", " << p[2] << std::endl;
-            // }
-            // TODO: Do any error handling required from ParGeo.
-
-
-
-            response = create_response_to_creation_message("OK", 0.001);
+            response = create_response_to_creation_message("OK", t.get_next());
             std::cout << response.dump() << std::endl;
+            t.stop();
+            t.reset();
         } else if (message_type == "exit") {
             exit(0);
         } else {
