@@ -32,7 +32,7 @@ json create_response_error(double time, const std::string &result) {
     return response;
 }
 
-json create_response_to_creation_message(const std::string& status, double time) {
+json create_response_to_creation_message(const std::string &status, double time) {
     json response;
     response["status"] = status;
     response["time"] = time;
@@ -51,7 +51,7 @@ std::vector<T> flatten(std::vector<std::vector<T>> const &vec) {
 
 template<int dim>
 pargeo::dynKdTree::rootNode<dim, pargeo::point<dim>> *
-createStruct(parlay::sequence<pargeo::point<dim>> points, std::vector<double> &weights) {
+createStruct(parlay::sequence<pargeo::point<dim>> points) {
     size_t n = points.size();
     auto *tree = new pargeo::dynKdTree::rootNode<dim, pargeo::point<dim>>(points, 0, n / 2);
     return tree;
@@ -105,7 +105,7 @@ void mainloop() {
             weights = std::vector<double>(pointsVector.size(), NAN);
             parlay::sequence<double> seqPoints(pointsVector.begin(), pointsVector.end());
             points = pargeo::pointIO::parsePointsW<pargeo::wpoint<dim>>(seqPoints, weights);
-            tree.reset(createStruct<dim>(points, weights));
+            tree.reset(createStruct<dim>(points));
 
             response = create_response_to_creation_message("OK", t.get_next());
             std::cout << response.dump() << std::endl;
@@ -134,7 +134,6 @@ int main(int argc, char *argv[]) {
         MAINLOOPMACRO(5);
         MAINLOOPMACRO(6);
         MAINLOOPMACRO(7);
-
         default:
             throw std::runtime_error("Dimension not yet added to example.");
     }
