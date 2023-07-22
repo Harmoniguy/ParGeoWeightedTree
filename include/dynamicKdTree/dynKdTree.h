@@ -794,7 +794,10 @@ namespace pargeo {
 
                     return left->kNNWRangeHelper(query, radius, bb) + right->kNNWRangeHelper(query, radius, bb);
 
+                } else {
+                    return 0;
                 }
+
 
             }
 
