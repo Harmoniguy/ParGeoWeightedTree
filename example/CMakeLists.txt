@@ -8,7 +8,6 @@ target_link_libraries(graphGenerator
   emstLib
   spatialGraphLib)
 
-set(CMAKE_BUILD_TYPE Debug)
 add_executable(kNearestNeighbor kNearestNeighbor.cpp)
 target_link_libraries(kNearestNeighbor pargeoLib)
 

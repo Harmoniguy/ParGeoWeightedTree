@@ -54,8 +54,7 @@ std::vector<T> flatten(std::vector<std::vector<T>> const &vec) {
 template<int dim>
 pargeo::dynKdTree::rootNode<dim, pargeo::point<dim>> *
 createStruct(parlay::sequence<pargeo::point<dim>> points) {
-    size_t n = points.size();
-    auto *tree = new pargeo::dynKdTree::rootNode<dim, pargeo::point<dim>>(points, 0, n / 2);
+    auto *tree = new pargeo::dynKdTree::rootNode<dim, pargeo::point<dim>>(points);
     return tree;
 }
 
@@ -85,12 +84,12 @@ void runQuery(pargeo::timer &t,
 
     size_t n = NewWeights.size();
     std::vector<double> sums(n, NAN);
-    for(int i = 0; i<n; i++){
-        sums[i] = tree->kNNWRange(points[i], radius);
-    }
-//    parlay::parallel_for(0, n, [&](size_t i) {
+//    for(int i = 0; i<n; i++){
 //        sums[i] = tree->kNNWRange(points[i], radius);
-//    });
+//    }
+    parlay::parallel_for(0, n, [&](size_t i) {
+        sums[i] = tree->kNNWRange(points[i], radius);
+    });
 
     // Generate response
     response = create_response_to_query_message("OK", t.get_next(), sums);
