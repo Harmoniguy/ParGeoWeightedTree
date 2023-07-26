@@ -65,11 +65,11 @@ void runQuery(pargeo::timer &t,
               std::unique_ptr<rootNode<dim, point<dim>>> &tree,
               std::vector<double> &weights,
               parlay::sequence<pargeo::wpoint<dim>> &points) {
-    t.start();
     // The query radius
     double radius = message["radius"].template get<double>();
     // Read the weights into a vector
     std::vector<double> NewWeights = message["weights"].template get<std::vector<double>>();
+    t.start();
     for (int i = 0; i < NewWeights.size(); i++){
         weights[i] = NewWeights[i];
     }
@@ -101,11 +101,10 @@ void buildStructure(pargeo::timer &t,
                     std::vector<double> &weights,
                     parlay::sequence<pargeo::wpoint<dim>> &points) {
     // Read the points into a vector.
-    t.start();
+
     std::vector<double> pointsVector = message["points"].template get<std::vector<double>>();
-
+    t.start();
     weights = std::vector<double>(pointsVector.size()/dim, NAN);
-
     parlay::sequence<double> seqPoints(pointsVector.begin(), pointsVector.end());
     points = pargeo::pointIO::parsePointsW<pargeo::wpoint<dim>>(seqPoints, weights);
     tree.reset(createStruct<dim>(points));
