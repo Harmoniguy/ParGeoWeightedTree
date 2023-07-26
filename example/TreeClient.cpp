@@ -68,15 +68,10 @@ void runQuery(pargeo::timer &t,
     t.start();
     // The query radius
     double radius = message["radius"].template get<double>();
-    std::cerr<<radius<<std::endl;
     // Read the weights into a vector
     std::vector<double> NewWeights = message["weights"].template get<std::vector<double>>();
     for (int i = 0; i < NewWeights.size(); i++){
-        std::cerr<<"Weights before: " <<weights[i] << std::endl;
-        std::cerr<<"NewWeights: " <<NewWeights[i] << std::endl;
         weights[i] = NewWeights[i];
-        std::cerr<<"Weights after: " <<weights[i] << std::endl;
-
     }
 
 
