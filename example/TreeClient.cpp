@@ -14,6 +14,8 @@
 #include "json.hpp"
 
 using json = nlohmann::json;
+using pargeo::dynKdTree::rootNode;
+using pargeo::point;
 
 json create_response_to_query_message(std::string status, double time, std::vector<double> result) {
     //TODO: fix time with pargeo::time
@@ -58,9 +60,71 @@ createStruct(parlay::sequence<pargeo::point<dim>> points) {
 }
 
 template<int dim>
+void runQuery(pargeo::timer &t,
+              json &message,
+              json &response,
+              std::unique_ptr<rootNode<dim, point<dim>>> &tree,
+              std::vector<double> &weights,
+              parlay::sequence<pargeo::wpoint<dim>> &points) {
+    t.start();
+    // The query radius
+    double radius = message["radius"].template get<double>();
+    std::cerr<<radius<<std::endl;
+    // Read the weights into a vector
+    std::vector<double> NewWeights = message["weights"].template get<std::vector<double>>();
+    for (int i = 0; i < NewWeights.size(); i++){
+        std::cerr<<"Weights before: " <<weights[i] << std::endl;
+        std::cerr<<"NewWeights: " <<NewWeights[i] << std::endl;
+        weights[i] = NewWeights[i];
+        std::cerr<<"Weights after: " <<weights[i] << std::endl;
+
+    }
+
+
+    tree->calcWeights();
+
+    size_t n = NewWeights.size();
+    std::vector<double> sums(n, NAN);
+    for(int i = 0; i<n; i++){
+        sums[i] = tree->kNNWRange(points[i], radius);
+    }
+//    parlay::parallel_for(0, n, [&](size_t i) {
+//        sums[i] = tree->kNNWRange(points[i], radius);
+//    });
+
+    // Generate response
+    response = create_response_to_query_message("OK", t.get_next(), sums);
+    std::cout << response.dump() << std::endl;
+    t.stop();
+    t.reset();
+}
+
+template<int dim>
+void buildStructure(pargeo::timer &t,
+                    json &message,
+                    json &response,
+                    std::unique_ptr<rootNode<dim, point<dim>>> &tree,
+                    std::vector<double> &weights,
+                    parlay::sequence<pargeo::wpoint<dim>> &points) {
+    // Read the points into a vector.
+    t.start();
+    std::vector<double> pointsVector = message["points"].template get<std::vector<double>>();
+
+    weights = std::vector<double>(pointsVector.size()/dim, NAN);
+
+    parlay::sequence<double> seqPoints(pointsVector.begin(), pointsVector.end());
+    points = pargeo::pointIO::parsePointsW<pargeo::wpoint<dim>>(seqPoints, weights);
+    tree.reset(createStruct<dim>(points));
+
+    response = create_response_to_creation_message("OK", t.get_next());
+    std::cout << response.dump() << std::endl;
+    t.stop();
+    t.reset();
+}
+
+template<int dim>
 void mainloop() {
-    using pargeo::dynKdTree::rootNode;
-    using pargeo::point;
+
 
     parlay::sequence<pargeo::wpoint<dim>> points;
     std::unique_ptr<rootNode<dim, point<dim>>> tree;
@@ -77,40 +141,9 @@ void mainloop() {
         std::string message_type = message["type"].template get<std::string>();
 
         if (message_type == "run-query") {
-            t.start();
-            // The query radius
-            double radius = message["radius"].template get<double>();
-
-            // Read the weights into a vector
-            std::vector<double> NewWeights = message["weights"].template get<std::vector<double>>();
-            for (int i = 0; i < NewWeights.size(); i++)
-                weights[i] = NewWeights[i];
-
-            tree->calcWeights();
-            size_t n = NewWeights.size();
-            std::vector<double> sums(n, NAN);
-            parlay::parallel_for(0, n, [&](size_t i) {
-                sums[i] = tree->kNNWRange(points[i], radius);
-            });
-
-            // Generate response
-            response = create_response_to_query_message("OK", t.get_next(), sums);
-            std::cout << response.dump() << std::endl;
-            t.stop();
-            t.reset();
+            runQuery(t, message, response, tree, weights, points);
         } else if (message_type == "build-datastructure") {
-            // Read the points into a vector.
-            t.start();
-            std::vector<double> pointsVector = message["points"].template get<std::vector<double>>();
-            weights = std::vector<double>(pointsVector.size(), NAN);
-            parlay::sequence<double> seqPoints(pointsVector.begin(), pointsVector.end());
-            points = pargeo::pointIO::parsePointsW<pargeo::wpoint<dim>>(seqPoints, weights);
-            tree.reset(createStruct<dim>(points));
-
-            response = create_response_to_creation_message("OK", t.get_next());
-            std::cout << response.dump() << std::endl;
-            t.stop();
-            t.reset();
+            buildStructure(t, message, response, tree, weights, points);
         } else if (message_type == "exit") {
             exit(0);
         } else {
