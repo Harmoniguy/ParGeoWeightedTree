@@ -20,9 +20,6 @@ target_link_libraries(rangeSearch pargeoLib)
 add_executable(dynamicKdTreeKNN dynamicKdTreeKNN.cpp)
 target_link_libraries(dynamicKdTreeKNN pargeoLib)
 
-add_executable(TreeClient TreeClient.cpp)
-target_link_libraries(TreeClient pargeoLib)
-
 add_executable(batchKdTree batchKdTree.cpp)
 target_link_libraries(batchKdTree pargeoLib)
 
@@ -52,3 +49,9 @@ target_link_libraries(smallestEnclosingBall pargeoLib
   # welzlSebLib
   # scanSebLib
   )
+
+
+add_compile_options(-fomit-frame-pointer -march=native -flto -fipa-pta -funroll-loops)
+add_executable(TreeClient TreeClient.cpp)
+target_link_libraries(TreeClient pargeoLib)
+

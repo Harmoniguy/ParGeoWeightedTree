@@ -13,9 +13,9 @@ if (USE_WARNINGS)
 endif()
 
 if(USE_PARALLEL)
-  set(CMAKE_CXX_FLAGS "-DHOMEGROWN -pthread -mcx16 -O3 -DNDEBUG -fPIC ${EXTRA_FLAGS}")
+  set(CMAKE_CXX_FLAGS "-DHOMEGROWN -pthread -mcx16 -O3 -DNDEBUG ${EXTRA_FLAGS}")
 else()
-  set(CMAKE_CXX_FLAGS "-DPARLAY_SEQUENTIAL -mcx16 -O3 -DNDEBUG -fPIC ${EXTRA_FLAGS}")
+  set(CMAKE_CXX_FLAGS "-DPARLAY_SEQUENTIAL -mcx16 -O3 -DNDEBUG -${EXTRA_FLAGS}")
 endif()
 
 message(STATUS "--------------- General configuration -------------")
