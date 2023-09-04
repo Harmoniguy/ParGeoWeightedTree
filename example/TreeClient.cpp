@@ -82,6 +82,7 @@ void runQuery(pargeo::timer &t,
 //    for(int i = 0; i<n; i++){
 //        sums[i] = tree->kNNWRange(points[i], radius);
 //    }
+	// NOTE: should this be parallel?
     parlay::parallel_for(0, n, [&](size_t i) {
         sums[i] = tree->kNNWRange(points[i], radius);
     });
@@ -92,6 +93,43 @@ void runQuery(pargeo::timer &t,
     t.stop();
     t.reset();
 }
+
+template<int dim>
+void runSampleQuery(pargeo::timer &t,
+              json &message,
+              json &response,
+              std::unique_ptr<rootNode<dim, point<dim>>> &tree,
+              std::vector<double> &weights,
+              parlay::sequence<pargeo::wpoint<dim>> &points) {
+    // The query radius
+    double radius = message["radius"].template get<double>();
+    // Read the weights into a vector
+    std::vector<double> NewWeights = message["weights"].template get<std::vector<double>>();
+	// Read the indices to test into a second vector
+	std::vector<size_t> indices = message["indices"].template get<std::vector<size_t>>();
+
+    t.start();
+    for (int i = 0; i < NewWeights.size(); i++){
+        weights[i] = NewWeights[i];
+    }
+
+    tree->calcWeights();
+
+    size_t n = indices.size();
+    std::vector<double> sums(n, NAN);
+	for(int i = 0; i<n; i++){
+		auto p = points[indices[i]];
+		sums[i] = tree->kNNWRange(p, radius);
+	}
+
+
+    // Generate response
+    response = create_response_to_query_message("OK", t.get_next(), sums);
+    std::cout << response.dump() << std::endl;
+    t.stop();
+    t.reset();
+}
+
 
 template<int dim>
 void buildStructure(pargeo::timer &t,
@@ -135,6 +173,8 @@ void mainloop() {
 
         if (message_type == "run-query") {
             runQuery(t, message, response, tree, weights, points);
+		} else if (message_type == "run-sampled-query") {
+			runSampleQuery(t, message, response, tree, weights, points);
         } else if (message_type == "build-datastructure") {
             buildStructure(t, message, response, tree, weights, points);
         } else if (message_type == "exit") {
