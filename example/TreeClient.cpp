@@ -117,11 +117,10 @@ void runSampleQuery(pargeo::timer &t,
 
     size_t n = indices.size();
     std::vector<double> sums(n, NAN);
-	for(int i = 0; i<n; i++){
+    parlay::parallel_for(0, n, [&](size_t i) {
 		auto p = points[indices[i]];
 		sums[i] = tree->kNNWRange(p, radius);
-	}
-
+    });
 
     // Generate response
     response = create_response_to_query_message("OK", t.get_next(), sums);
