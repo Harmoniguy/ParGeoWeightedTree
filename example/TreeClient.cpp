@@ -199,6 +199,7 @@ int main(int argc, char *argv[]) {
         MAINLOOPMACRO(5);
         MAINLOOPMACRO(6);
         MAINLOOPMACRO(7);
+		MAINLOOPMACRO(25);
         default:
             throw std::runtime_error("Dimension not yet added to example.");
     }
